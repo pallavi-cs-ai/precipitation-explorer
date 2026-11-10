@@ -1,0 +1,246 @@
+{
+  "source": "ECMWF Open Data primary server",
+  "model": "ifs",
+  "run_utc": "2026-11-10T06:00:00",
+  "file": "ifs-2026111006-tp.grib2",
+  "sha256": "ea577f12f20be791c55ba01566a2fdc9f8341716d69325b12aaab12b4aace6a3",
+  "download_bytes": 1238539,
+  "discovery_and_fetch_seconds": 1.2561096248682588,
+  "fields": [
+    {
+      "shortName": "tp",
+      "paramId": 228,
+      "units": "m",
+      "stepType": "accum",
+      "startStep": 0,
+      "endStep": 3,
+      "dataDate": 20261110,
+      "dataTime": 600,
+      "validityDate": 20261110,
+      "validityTime": 900,
+      "Ni": 1440,
+      "Nj": 721,
+      "gridType": "regular_ll",
+      "numberOfMissing": 0,
+      "packingError": 1.52587890625e-05,
+      "global_min_mm": 0.0,
+      "global_max_mm": 114.410400390625
+    },
+    {
+      "shortName": "tp",
+      "paramId": 228,
+      "units": "m",
+      "stepType": "accum",
+      "startStep": 0,
+      "endStep": 6,
+      "dataDate": 20261110,
+      "dataTime": 600,
+      "validityDate": 20261110,
+      "validityTime": 1200,
+      "Ni": 1440,
+      "Nj": 721,
+      "gridType": "regular_ll",
+      "numberOfMissing": 0,
+      "packingError": 3.0517578125e-05,
+      "global_min_mm": 0.0,
+      "global_max_mm": 209.5947265625
+    },
+    {
+      "shortName": "tp",
+      "paramId": 228,
+      "units": "m",
+      "stepType": "accum",
+      "startStep": 0,
+      "endStep": 9,
+      "dataDate": 20261110,
+      "dataTime": 600,
+      "validityDate": 20261110,
+      "validityTime": 1500,
+      "Ni": 1440,
+      "Nj": 721,
+      "gridType": "regular_ll",
+      "numberOfMissing": 0,
+      "packingError": 6.103515625e-05,
+      "global_min_mm": 0.0,
+      "global_max_mm": 254.150390625
+    },
+    {
+      "shortName": "tp",
+      "paramId": 228,
+      "units": "m",
+      "stepType": "accum",
+      "startStep": 0,
+      "endStep": 12,
+      "dataDate": 20261110,
+      "dataTime": 600,
+      "validityDate": 20261110,
+      "validityTime": 1800,
+      "Ni": 1440,
+      "Nj": 721,
+      "gridType": "regular_ll",
+      "numberOfMissing": 0,
+      "packingError": 6.103515625e-05,
+      "global_min_mm": 0.0,
+      "global_max_mm": 294.5556640625
+    }
+  ],
+  "intervals": [
+    {
+      "start_hour": 0,
+      "end_hour": 3,
+      "cities": {
+        "Mumbai": {
+          "grid_lat": 19.0,
+          "grid_lon": 73.0,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Pune": {
+          "grid_lat": 18.5,
+          "grid_lon": 73.75,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Chennai": {
+          "grid_lat": 13.0,
+          "grid_lon": 80.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Delhi": {
+          "grid_lat": 28.5,
+          "grid_lon": 77.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Wettest regional grid": {
+          "grid_lat": 19.75,
+          "grid_lon": 92.5,
+          "interval_mm": 57.12890625,
+          "cumulative_mm": 57.12890625
+        }
+      },
+      "minimum_raw_difference_mm": 0.0,
+      "packing_tolerance_mm": 0.0152587990625,
+      "negative_differences_clipped": 0
+    },
+    {
+      "start_hour": 3,
+      "end_hour": 6,
+      "cities": {
+        "Mumbai": {
+          "grid_lat": 19.0,
+          "grid_lon": 73.0,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Pune": {
+          "grid_lat": 18.5,
+          "grid_lon": 73.75,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Chennai": {
+          "grid_lat": 13.0,
+          "grid_lon": 80.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Delhi": {
+          "grid_lat": 28.5,
+          "grid_lon": 77.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Wettest regional grid": {
+          "grid_lat": 19.75,
+          "grid_lon": 92.5,
+          "interval_mm": 90.39306640625,
+          "cumulative_mm": 147.52197265625
+        }
+      },
+      "minimum_raw_difference_mm": -0.030517578125,
+      "packing_tolerance_mm": 0.0457763771875,
+      "negative_differences_clipped": 22907
+    },
+    {
+      "start_hour": 6,
+      "end_hour": 9,
+      "cities": {
+        "Mumbai": {
+          "grid_lat": 19.0,
+          "grid_lon": 73.0,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Pune": {
+          "grid_lat": 18.5,
+          "grid_lon": 73.75,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Chennai": {
+          "grid_lat": 13.0,
+          "grid_lon": 80.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Delhi": {
+          "grid_lat": 28.5,
+          "grid_lon": 77.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Wettest regional grid": {
+          "grid_lat": 19.75,
+          "grid_lon": 92.5,
+          "interval_mm": 3.60107421875,
+          "cumulative_mm": 151.123046875
+        }
+      },
+      "minimum_raw_difference_mm": -0.06103515625,
+      "packing_tolerance_mm": 0.091552744375,
+      "negative_differences_clipped": 46780
+    },
+    {
+      "start_hour": 9,
+      "end_hour": 12,
+      "cities": {
+        "Mumbai": {
+          "grid_lat": 19.0,
+          "grid_lon": 73.0,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Pune": {
+          "grid_lat": 18.5,
+          "grid_lon": 73.75,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Chennai": {
+          "grid_lat": 13.0,
+          "grid_lon": 80.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Delhi": {
+          "grid_lat": 28.5,
+          "grid_lon": 77.25,
+          "interval_mm": 0.0,
+          "cumulative_mm": 0.0
+        },
+        "Wettest regional grid": {
+          "grid_lat": 19.75,
+          "grid_lon": 92.5,
+          "interval_mm": 0.48828125,
+          "cumulative_mm": 151.611328125
+        }
+      },
+      "minimum_raw_difference_mm": 0.0,
+      "packing_tolerance_mm": 0.1220703225,
+      "negative_differences_clipped": 0
+    }
+  ],
+  "note": "Forecast values, not observations. City values use nearest grid point. Times UTC."
+}

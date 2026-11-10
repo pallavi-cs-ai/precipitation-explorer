@@ -8,3 +8,5 @@ data/
 *.grib*
 *.idx
 .DS_Store
+
+reports/run.log
