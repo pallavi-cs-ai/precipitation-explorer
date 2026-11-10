@@ -28,3 +28,9 @@ All commands, edits, verification and commits below were performed in the same C
 - Pushed initialization commit `7db2c06` and exploration commit `dc78685` to `main`.
 - Reviewed tracked files before publication; credentials, environments, raw forecasts and temporary logs remain excluded.
 - Application deployment has not yet been created.
+
+## Architecture checkpoint
+
+- User locked the precipitation explorer product and map/timeline/chart interactions.
+- Recorded chart behavior, API contracts, three cache layers, data correctness requirements and delivery standards in `docs/ARCHITECTURE.md`.
+- Documentation validation: `git diff --check`. No runtime code changed at this checkpoint.
