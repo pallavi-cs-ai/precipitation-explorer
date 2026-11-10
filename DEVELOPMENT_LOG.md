@@ -22,4 +22,9 @@ All commands, edits, verification and commits below were performed in the same C
 - Findings and limitations: `reports/FINDINGS.md`.
 - Commit identity for this milestone is available in `git log`; this log is committed with the milestone.
 
-No public GitHub repository or deployment has been created at this exploration stage.
+## Milestone 3 — publish exploration repository
+
+- On user request, created public repository https://github.com/pallavi-cs-ai/precipitation-explorer using GitHub CLI in this same session.
+- Pushed initialization commit `7db2c06` and exploration commit `dc78685` to `main`.
+- Reviewed tracked files before publication; credentials, environments, raw forecasts and temporary logs remain excluded.
+- Application deployment has not yet been created.
