@@ -28,6 +28,10 @@ Open http://127.0.0.1:3000. Vite proxies `/api` to port 8000. Ingestion fetches 
 
 For a production-style local process, run `npm run build` in `frontend`, then `python -m backend.app.serve` from the repository root. FastAPI serves the compiled frontend and the supervisor runs ingestion separately.
 
+## Optional global overview
+
+The deployed service remains on the India profile. A tested 1° sampled global profile is available locally with `FORECAST_COVERAGE=global1` and a separate `FORECAST_DATA_DIR`. See [benchmark, limitations and rollout](docs/GLOBAL_BENCHMARK.md). API fields and interactions are shared between profiles.
+
 ## Scientific scope
 
 - ECMWF IFS total precipitation, cropped to grid centers 5–38°N and 65–100°E at 0.25° resolution.

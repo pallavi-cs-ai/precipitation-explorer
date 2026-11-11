@@ -17,8 +17,8 @@ import requests
 from eccodes import codes_get, codes_get_array, codes_grib_new_from_file, codes_release
 from ecmwf.opendata import Client
 
+from .coverage import INDIA, Coverage, configured_coverage
 from .processing import (
-    BOUNDS,
     COLORS,
     THRESHOLDS,
     DataValidationError,
@@ -37,7 +37,7 @@ class TimeoutSession(requests.Session):
         return super().request(*args, **kwargs)
 
 
-def decode(path: Path, expected_run: datetime):
+def decode(path: Path, expected_run: datetime, coverage: Coverage = INDIA):
     arrays, records, coordinates = {}, {}, None
     with path.open("rb") as stream:
         while (gid := codes_grib_new_from_file(stream)) is not None:
@@ -81,10 +81,10 @@ def decode(path: Path, expected_run: datetime):
                 values = to_mm(codes_get_array(gid, "values"), meta["units"])
                 if not np.isfinite(values).all() or values.min() < 0:
                     raise DataValidationError("Invalid precipitation values")
-                mask = (lat >= 5) & (lat <= 38) & (lon >= 65) & (lon <= 100)
+                mask = coverage.select(lat, lon)
                 yy, xx = np.unique(lat[mask])[::-1], np.unique(lon[mask])
-                if len(yy) != 133 or len(xx) != 141:
-                    raise DataValidationError("Unexpected regional 0.25 degree grid")
+                if (len(yy), len(xx)) != coverage.shape:
+                    raise DataValidationError("Unexpected coverage grid")
                 order = np.lexsort((lon[mask], -lat[mask]))
                 arrays[step] = values[mask][order].reshape(len(yy), len(xx))
                 records[step] = {
@@ -109,6 +109,7 @@ def decode(path: Path, expected_run: datetime):
 
 
 def refresh(root: Path = ROOT):
+    coverage = configured_coverage()
     root.mkdir(parents=True, exist_ok=True)
     with (root / ".ingest.lock").open("w") as lock:
         try:
@@ -132,12 +133,12 @@ def refresh(root: Path = ROOT):
                 run = client.latest(type="fc", stream="oper", step=72, param="tp").replace(
                     tzinfo=timezone.utc
                 )
-                run_id = f"ifs-{run:%Y%m%dT%H}Z"
+                run_id = f"ifs-{run:%Y%m%dT%H}Z{coverage.suffix}"
                 target = root / run_id
                 current = (
                     (root / "latest").read_text().strip() if (root / "latest").exists() else ""
                 )
-                if current > run_id:
+                if current and current.split("Z")[0] > run_id.split("Z")[0]:
                     log.warning("Ignoring older source run %s; current run is %s", run_id, current)
                     return
                 if (target / "manifest.json").exists():
@@ -160,11 +161,13 @@ def refresh(root: Path = ROOT):
                     param="tp",
                     target=str(grib),
                 )
-                cube, lat, lon, records = decode(grib, run)
+                cube, lat, lon, records = decode(grib, run, coverage)
                 np.savez_compressed(stage / "grid.npz", precipitation=cube, lat=lat, lon=lon)
                 intervals = []
                 for i, step in enumerate(range(3, 73, 3)):
-                    (stage / f"{i}.png").write_bytes(render_png(cube[i], lat, lon))
+                    (stage / f"{i}.png").write_bytes(
+                        render_png(cube[i], lat, lon, bounds=coverage.bounds)
+                    )
                     intervals.append(
                         {
                             "id": i,
@@ -179,8 +182,8 @@ def refresh(root: Path = ROOT):
                     "model": "IFS",
                     "initialization": run.isoformat(),
                     "generated_at": datetime.now(timezone.utc).isoformat(),
-                    "resolution": 0.25,
-                    "bounds": BOUNDS,
+                    "resolution": coverage.resolution,
+                    "bounds": coverage.bounds,
                     "units": "mm",
                     "interval_hours": 3,
                     "intervals": intervals,

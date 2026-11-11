@@ -1,3 +1,4 @@
+import { coordinates } from './lib/api'
 import { useCallback, useEffect, useReducer, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -76,6 +77,13 @@ const cities: Location[] = [
   { name: 'Kolkata', lat: 22.5726, lon: 88.3639 },
   { name: 'Hyderabad', lat: 17.385, lon: 78.4867 },
   { name: 'Guwahati', lat: 26.1445, lon: 91.7362 },
+  { name: 'London', lat: 51.5074, lon: -0.1278 },
+  { name: 'New York', lat: 40.7128, lon: -74.006 },
+  { name: 'São Paulo', lat: -23.5505, lon: -46.6333 },
+  { name: 'Cape Town', lat: -33.9249, lon: 18.4241 },
+  { name: 'Tokyo', lat: 35.6762, lon: 139.6503 },
+  { name: 'Sydney', lat: -33.8688, lon: 151.2093 },
+  { name: 'Auckland', lat: -36.8485, lon: 174.7633 },
 ]
 function ErrorNotice({ error, retry }: { error: Error; retry: () => void }) {
   return (
@@ -128,10 +136,11 @@ export default function App() {
         <div className="about-panel">
           <strong>A forecast, clearly presented.</strong>
           <p>
-            Real ECMWF IFS total precipitation at 0.25° resolution. Amounts include liquid and
-            frozen precipitation as water equivalent. Each bar represents three hours, not exact
-            rain timing. Location values use the nearest grid cell. This explorer is not a warning
-            service.
+            Real ECMWF IFS total precipitation from a native 0.25° grid. The global overview samples
+            this grid at 1° spacing, not an area average; small rain systems can be missed. The map
+            excludes latitudes beyond ±85.05°. Amounts include liquid and frozen precipitation as
+            water equivalent. Each bar represents three hours, not exact rain timing. Location
+            values use the nearest grid cell. This explorer is not a warning service.
           </p>
           <a
             href="https://www.ecmwf.int/en/forecasts/datasets/open-data"
@@ -222,7 +231,7 @@ function Explorer({
     (location: Location) => {
       const [w, s, e, n] = manifest.bounds
       if (location.lon < w || location.lon > e || location.lat < s || location.lat > n) {
-        setSelectionError('Choose a location inside the India-region forecast (65–100°E, 5–38°N).')
+        setSelectionError('Choose a location inside the displayed forecast coverage.')
         return
       }
       setSelectionError(null)
@@ -319,7 +328,9 @@ function Explorer({
             Initialized {day(manifest.initialization)} · {time(manifest.initialization)} IST
           </span>
           <span className="resolution">
-            0.25° grid <span>·</span> 3-hour intervals <span>·</span> India region
+            {manifest.resolution}° {manifest.resolution === 1 ? 'sampled grid' : 'grid'}{' '}
+            <span>·</span> 3-hour intervals <span>·</span>{' '}
+            {manifest.bounds[0] === -180 ? 'Global overview' : 'India region'}
           </span>
           {newer && (
             <Button size="sm" onClick={newer}>
@@ -456,6 +467,13 @@ function Explorer({
             {searchOpen && (
               <div className="city-results">
                 {cities
+                  .filter(
+                    (c) =>
+                      c.lon >= manifest.bounds[0] &&
+                      c.lon <= manifest.bounds[2] &&
+                      c.lat >= manifest.bounds[1] &&
+                      c.lat <= manifest.bounds[3],
+                  )
                   .filter((c) => c.name!.toLowerCase().includes(search.toLowerCase()))
                   .map((c) => (
                     <button key={c.name} onClick={() => selectLocation(c)}>
@@ -475,11 +493,11 @@ function Explorer({
             </span>
             <div>
               <h2>{state.location.name ?? 'Selected location'}</h2>
-              <p>
-                {state.location.lat.toFixed(2)}°N, {state.location.lon.toFixed(2)}°E
-              </p>
+              <p>{coordinates(state.location.lat, state.location.lon)}</p>
             </div>
-            <span className="location-tag">INDIA REGION</span>
+            <span className="location-tag">
+              {manifest.bounds[0] === -180 ? 'GLOBAL · 1° SAMPLED' : 'INDIA REGION'}
+            </span>
           </div>
           {point.isPending ? (
             <div className="point-loading" role="status">
@@ -610,9 +628,8 @@ function Explorer({
                 <div className="grid-note">
                   <Info size={14} />
                   <p>
-                    Sampled at {point.data.sampled.lat.toFixed(2)}°N,{' '}
-                    {point.data.sampled.lon.toFixed(2)}°E. Grid values represent an area, not a
-                    street-level prediction.
+                    Sampled at {coordinates(point.data.sampled.lat, point.data.sampled.lon)}. Grid
+                    values represent an area, not a street-level prediction.
                   </p>
                 </div>
               </>

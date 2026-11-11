@@ -24,3 +24,10 @@ describe('forecast correctness', () => {
     expect(reducer({ ...s, range: [1, 4] }, { type: 'select', index: 2 }).range).toBeNull()
   })
 })
+
+import { coordinates, normalizeLongitude } from './api'
+it('handles western/southern coordinates and wrapped longitudes', () => {
+  expect(coordinates(-33.87, -70.66)).toBe('33.87°S, 70.66°W')
+  expect(normalizeLongitude(181)).toBe(-179)
+  expect(normalizeLongitude(-181)).toBe(179)
+})

@@ -57,3 +57,7 @@ Separate ingestion, scientific transforms, storage, API routes and frontend feat
 Tests should cover unit conversion, packing tolerance/reset rejection, missing data, grid lookup, coordinate orientation, UTC intervals, range sum consistency, API validation and stale-response protection. Verify scientific point values against decoded GRIB. Integration test a real-data artifact. Browser smoke test must prove map click -> point series, bar/timeline -> matching frame, mobile layout, loading/errors and phase-two range totals. Run typecheck, lint, production build and appropriate tests before milestone commits. CI runs these checks; it must not depend on live ECMWF availability.
 
 Deliver in order: (1) full horizon ingestion + API contract/tests, (2) synchronized responsive frontend, (3) deployed vertical slice and refresh, (4) range selection if stable, (5) final verification and walkthrough. Every milestone committed within this session.
+
+## Configurable coverage extension
+
+The default India profile remains unchanged. `FORECAST_COVERAGE=global1` selects a 1° sampled global grid, with projected map bounds limited to Web Mercator. Profile definitions live in `backend/app/coverage.py`. Global run identifiers append `-global1` to avoid immutable cache collisions; treat identifiers as opaque strings. Rendering and point queries read the run manifest bounds. See `GLOBAL_BENCHMARK.md` for sampling limitations, measurements and rollout status.

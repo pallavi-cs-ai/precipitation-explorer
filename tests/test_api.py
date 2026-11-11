@@ -150,3 +150,51 @@ def test_corrupt_dataset_returns_service_error(tmp_path):
     response = client.get(f"/api/v1/forecasts/{run}/point?lat=6&lon=65")
     assert response.status_code == 503
     assert response.headers["cache-control"] == "no-store"
+
+
+def test_global_profile_sampling_and_seam(tmp_path):
+    from backend.app.coverage import GLOBAL, INDIA
+
+    lat = np.array([89.5, 89.25, -89.5, 5.0])
+    lon = np.array([-179.5, -179.5, 179.5, 65.0])
+    assert GLOBAL.select(lat, lon).tolist() == [True, False, True, False]
+    assert GLOBAL.shape == (180, 360)
+    assert INDIA.shape == (133, 141)
+    client, old_run = seed(tmp_path)
+    folder = tmp_path / old_run
+    run = old_run + "-global1"
+    manifest = json.loads((folder / "manifest.json").read_text())
+    manifest.update(run_id=run, resolution=1, bounds=GLOBAL.bounds)
+    (folder / "manifest.json").write_text(json.dumps(manifest))
+    cube = np.array([[[1, 20], [1, 20]], [[2, 30], [2, 30]]], dtype=np.float32)
+    np.savez_compressed(
+        folder / "grid.npz",
+        precipitation=cube,
+        lat=np.array([0.5, -0.5]),
+        lon=np.array([-179.5, 179.5]),
+    )
+    folder.rename(tmp_path / run)
+    (tmp_path / "latest").write_text(run)
+    assert client.get("/readyz").status_code == 200
+    for longitude, expected in [(-179.9, 1), (179.9, 20), (-180, 1), (180, 1)]:
+        result = client.get(f"/api/v1/forecasts/{run}/point?lat=0&lon={longitude}")
+        assert result.status_code == 200
+        assert result.json()["intervals"][0]["amount_mm"] == expected
+    assert client.get(f"/api/v1/forecasts/{run}/point?lat=89&lon=0").status_code == 422
+    response = client.get(f"/api/v1/forecasts/{run}/accumulation.png?start=0&end=2")
+    pixels = np.asarray(Image.open(BytesIO(response.content)))
+    assert not np.array_equal(pixels[0, 0], pixels[0, -1])
+
+
+def test_coverage_configuration(monkeypatch):
+    import pytest
+
+    from backend.app.coverage import GLOBAL, INDIA, configured_coverage
+
+    monkeypatch.delenv("FORECAST_COVERAGE", raising=False)
+    assert configured_coverage() == INDIA
+    monkeypatch.setenv("FORECAST_COVERAGE", "global1")
+    assert configured_coverage() == GLOBAL
+    monkeypatch.setenv("FORECAST_COVERAGE", "typo")
+    with pytest.raises(ValueError, match="Unknown"):
+        configured_coverage()

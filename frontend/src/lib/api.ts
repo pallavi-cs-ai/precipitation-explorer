@@ -55,3 +55,7 @@ export function initialInterval(manifest: Manifest, now = Date.now()) {
   const found = manifest.intervals.findIndex((i) => new Date(i.end).getTime() > now)
   return found < 0 ? manifest.intervals.length - 1 : found
 }
+
+export const coordinates = (lat: number, lon: number) =>
+  `${Math.abs(lat).toFixed(2)}°${lat < 0 ? 'S' : 'N'}, ${Math.abs(lon).toFixed(2)}°${lon < 0 ? 'W' : 'E'}`
+export const normalizeLongitude = (lon: number) => ((((lon + 180) % 360) + 360) % 360) - 180

@@ -1,0 +1,28 @@
+{
+  "profile": "global",
+  "source": {
+    "run": "2026-11-11T06:00:00",
+    "download_seconds": 14.255618875147775,
+    "bytes": 10273421
+  },
+  "shape": [
+    24,
+    180,
+    360
+  ],
+  "cube_bytes": 6220800,
+  "peak_rss_bytes": 175751168,
+  "decode_seconds": 1.9220827920362353,
+  "encode_seconds": 0.6099199999589473,
+  "processing_seconds": 2.5320027919951826,
+  "accumulation_seconds": 0.01575320796109736,
+  "accumulation_bytes": 28721,
+  "grid_bytes": 714574,
+  "frames_bytes": 605751,
+  "max_frame_bytes": 26240,
+  "png_size": [
+    564,
+    576
+  ],
+  "method": "nearest source-grid sample at 1-degree cell centers"
+}

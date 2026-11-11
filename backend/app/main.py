@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from threading import Lock
 
 import numpy as np
 from fastapi import FastAPI, HTTPException, Query, Request, Response
@@ -71,9 +72,10 @@ class PointForecast(BaseModel):
 class ForecastStore:
     def __init__(self, root: Path):
         self.root = root
+        self.render_lock = Lock()
 
     def directory(self, run_id: str) -> Path:
-        if not re.fullmatch(r"ifs-\d{8}T\d{2}Z", run_id):
+        if not re.fullmatch(r"ifs-\d{8}T\d{2}Z(?:-global1)?", run_id):
             raise HTTPException(404, "Forecast run not found")
         path = self.root / run_id
         if not (path / "manifest.json").is_file():
@@ -109,8 +111,16 @@ class ForecastStore:
 
     @lru_cache(maxsize=32)
     def accumulated_image(self, run_id: str, start: int, end: int):
-        cube, lat, lon = self.grid(run_id)
-        return render_png(cube[start:end].sum(axis=0, dtype=np.float64), lat, lon, accumulated=True)
+        # Bound temporary rendering allocations when multiple users scrub ranges.
+        with self.render_lock:
+            cube, lat, lon = self.grid(run_id)
+            return render_png(
+                cube[start:end].sum(axis=0, dtype=np.float64),
+                lat,
+                lon,
+                accumulated=True,
+                bounds=self.manifest(run_id).bounds,
+            )
 
 
 def create_app(root: Path | None = None) -> FastAPI:
@@ -201,9 +211,9 @@ def create_app(root: Path | None = None) -> FastAPI:
         manifest = store.manifest(run_id)
         w, s, e, n = manifest.bounds
         if not (w <= lon <= e and s <= lat <= n):
-            raise HTTPException(422, "This location is outside the available India-region forecast")
+            raise HTTPException(422, "This location is outside the displayed forecast coverage")
         cube, yy, xx = store.grid(run_id)
-        iy, ix = int(np.abs(yy - lat).argmin()), int(np.abs(xx - lon).argmin())
+        iy, ix = int(np.abs(yy - lat).argmin()), int(np.abs((xx - lon + 180) % 360 - 180).argmin())
         values = cube[:, iy, ix]
         response.headers["Cache-Control"] = "public, max-age=86400, immutable"
         return PointForecast(

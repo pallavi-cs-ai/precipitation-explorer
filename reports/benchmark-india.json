@@ -1,0 +1,28 @@
+{
+  "profile": "india",
+  "source": {
+    "run": "2026-11-11T06:00:00",
+    "download_seconds": 14.255618875147775,
+    "bytes": 10273421
+  },
+  "shape": [
+    24,
+    133,
+    141
+  ],
+  "cube_bytes": 1800288,
+  "peak_rss_bytes": 161939456,
+  "decode_seconds": 1.7954517910256982,
+  "encode_seconds": 0.3137746669817716,
+  "processing_seconds": 2.1092264580074698,
+  "accumulation_seconds": 0.009668875019997358,
+  "accumulation_bytes": 10663,
+  "grid_bytes": 180922,
+  "frames_bytes": 202222,
+  "max_frame_bytes": 10134,
+  "png_size": [
+    564,
+    576
+  ],
+  "method": "original regional crop"
+}

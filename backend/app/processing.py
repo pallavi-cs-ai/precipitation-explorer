@@ -31,9 +31,11 @@ def deaccumulate(previous: np.ndarray, current: np.ndarray, tolerance: float) ->
     return np.maximum(delta, 0).astype(np.float32)
 
 
-def render_png(values: np.ndarray, lat: np.ndarray, lon: np.ndarray, *, accumulated=False) -> bytes:
+def render_png(
+    values: np.ndarray, lat: np.ndarray, lon: np.ndarray, *, accumulated=False, bounds=BOUNDS
+) -> bytes:
     """Nearest-neighbour sample into Web Mercator; no visual spatial precision invented."""
-    west, south, east, north = BOUNDS
+    west, south, east, north = bounds
     width, height = 564, 576
     xs = np.linspace(west, east, width, endpoint=False) + (east - west) / (2 * width)
 

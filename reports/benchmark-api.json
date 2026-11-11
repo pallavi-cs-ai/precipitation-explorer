@@ -1,0 +1,7 @@
+{
+  "concurrent_clients": 8,
+  "requests": 40,
+  "seconds": 0.5895778341218829,
+  "peak_rss_bytes": 81772544,
+  "note": "API process only; local TestClient threads, not Render throughput; cache limit 32"
+}

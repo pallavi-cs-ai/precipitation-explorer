@@ -1,3 +1,4 @@
+import { normalizeLongitude } from '../lib/api'
 import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -20,6 +21,7 @@ export function ForecastMap({
   onStatus,
   opacity,
 }: Props) {
+  const initialBounds = useRef(manifest.bounds)
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
   const marker = useRef<maplibregl.Marker | null>(null)
@@ -41,9 +43,10 @@ export function ForecastMap({
       m = new maplibregl.Map({
         container: container.current,
         style: 'https://tiles.openfreemap.org/styles/positron',
-        center: [82, 21],
-        zoom: 3.7,
-        minZoom: 2.4,
+        center: initialBounds.current[0] === -180 ? [0, 15] : [82, 21],
+        zoom: initialBounds.current[0] === -180 ? 0.8 : 3.7,
+        minZoom: 0,
+        renderWorldCopies: false,
         maxZoom: 10,
         attributionControl: { compact: true },
       })
@@ -57,6 +60,16 @@ export function ForecastMap({
     map.current = m
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
     m.on('load', () => {
+      clearTimeout(timeout)
+      const [w, s, e, n] = initialBounds.current
+      if (w === -180)
+        m.fitBounds(
+          [
+            [w, s],
+            [e, n],
+          ],
+          { padding: 12, duration: 0 },
+        )
       setReady(true)
       setMapError(null)
     })
@@ -68,7 +81,7 @@ export function ForecastMap({
     m.on('click', (e) =>
       callbacks.current.onLocation({
         lat: Number(e.lngLat.lat.toFixed(4)),
-        lon: Number(e.lngLat.lng.toFixed(4)),
+        lon: Number(normalizeLongitude(e.lngLat.lng).toFixed(4)),
       }),
     )
     const observer = new ResizeObserver(() => m.resize())
@@ -187,12 +200,12 @@ export function ForecastMap({
         variant="outline"
         size="icon"
         className="map-reset"
-        aria-label="Reset map to India"
+        aria-label="Reset map to forecast coverage"
         onClick={() =>
           map.current?.fitBounds(
             [
-              [65, 5],
-              [100, 38],
+              [manifest.bounds[0], manifest.bounds[1]],
+              [manifest.bounds[2], manifest.bounds[3]],
             ],
             { padding: 45, duration: 600 },
           )

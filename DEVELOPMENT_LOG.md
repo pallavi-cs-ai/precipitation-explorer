@@ -73,3 +73,14 @@ All commands, edits, verification and commits below were performed in the same C
 - Verified HTTPS frontend, health and readiness, real run ifs-20261111T06Z, point series, PNG frame, accumulation image and structured invalid-coordinate response.
 - Browser verified map/chart rendering, next-interval synchronization, full-period selection and no console errors. Evidence: reports/deployment-checks.json and reports/deployed-preview.jpg.
 - Idle wake-up/re-ingestion timing remains unmeasured. Documentation-only follow-up commit does not require redeploying the verified application.
+
+## Milestone 7 — benchmark and configurable global overview
+
+- User authorized benchmarking and conditional global implementation while keeping the deployed India service stable.
+- Benchmarked the original India pipeline and 1° global sampling using the same real 24-field IFS run. Input download is unchanged; global processed grid plus frames is 1.26 MiB.
+- Added explicit india/global1 coverage profiles, bounds-driven PNG rendering, profile-separated immutable run IDs, circular longitude sampling and a bounded accumulation renderer.
+- Global ingestion peak RSS 167.61 MiB; API stress peak 77.98 MiB after serialization of image renders. Combined approximate 300 MiB budget includes runtime headroom; Render timing/peak remains unmeasured. Details and caveats: docs/GLOBAL_BENCHMARK.md.
+- Updated shared UI for manifest coverage/resolution, global presets and correct hemisphere labels. Retained IST labels and existing API fields/interactions. Fixed false basemap timeout observed in browser verification.
+- Verification: 11 backend tests and 4 frontend tests passed; Ruff, ESLint, TypeScript/Vite build passed. Local real-data global ingestion and browser interval/range/city checks passed; no console errors.
+- Preview: http://127.0.0.1:8001. Evidence: reports/global-preview.jpg and benchmark JSON files.
+- Production is still d96df11 / India. No Render environment changes, new paid resources or extra free service were created.
