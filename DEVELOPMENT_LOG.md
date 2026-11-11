@@ -100,3 +100,10 @@ All commands, edits, verification and commits below were performed in the same C
 
 - User requested map heading: 3-HOUR PRECIPITATION for interval mode, TOTAL PRECIPITATION for selected-period accumulation.
 - Updated the existing mode-dependent label. Verification: TypeScript/Vite production build and git diff --check passed.
+
+## Global default location
+
+- User requested a UK default location with useful precipitation data. Compared eight UK locations against the live ifs-20261111T12Z-global1 run.
+- Selected Fort William, UK: approximately 3.54 mm over 72 hours, with 11 intervals >=0.1 mm. This is a forecast-grid sample, not an observation or a guarantee of future rainfall.
+- Global mode initially selects Fort William; India retains Chennai, and existing location search/map selection remain available.
+- ESLint and TypeScript/Vite production build passed.

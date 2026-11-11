@@ -68,6 +68,7 @@ export function reducer(state: State, action: Action): State {
       }
   }
 }
+const globalDefault: Location = { name: 'Fort William, UK', lat: 56.8198, lon: -5.1052 }
 const cities: Location[] = [
   { name: 'Chennai', lat: 13.0827, lon: 80.2707 },
   { name: 'Bengaluru', lat: 12.9716, lon: 77.5946 },
@@ -77,6 +78,7 @@ const cities: Location[] = [
   { name: 'Kolkata', lat: 22.5726, lon: 88.3639 },
   { name: 'Hyderabad', lat: 17.385, lon: 78.4867 },
   { name: 'Guwahati', lat: 26.1445, lon: 91.7362 },
+  globalDefault,
   { name: 'London', lat: 51.5074, lon: -0.1278 },
   { name: 'New York', lat: 40.7128, lon: -74.006 },
   { name: 'São Paulo', lat: -23.5505, lon: -46.6333 },
@@ -205,7 +207,7 @@ function Explorer({
 }) {
   const [state, dispatch] = useReducer(reducer, {
     index: initialInterval(manifest),
-    location: cities[0],
+    location: manifest.bounds[0] === -180 ? globalDefault : cities[0],
     playing: false,
     range: null,
   })
