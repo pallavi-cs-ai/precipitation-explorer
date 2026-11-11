@@ -10,7 +10,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import type { PointForecast } from '../lib/api'
-import { amount, day, time } from '../lib/api'
+import { amount, chartRange, day, time } from '../lib/api'
 echarts.use([
   BarChart,
   GridComponent,
@@ -31,6 +31,10 @@ interface Props {
 export function ForecastChart({ data, selected, range, onSelect, onRange, rangeMode }: Props) {
   const container = useRef<HTMLDivElement>(null)
   const instance = useRef<echarts.ECharts | null>(null)
+  const intervalCount = useRef(data.intervals.length)
+  useEffect(() => {
+    intervalCount.current = data.intervals.length
+  }, [data.intervals.length])
   const actions = useRef({ onSelect, onRange })
   useEffect(() => {
     actions.current = { onSelect, onRange }
@@ -45,8 +49,8 @@ export function ForecastChart({ data, selected, range, onSelect, onRange, rangeM
     chart.on('brushEnd', (event: unknown) => {
       const areas = (event as { areas?: { coordRange?: number[] }[] }).areas
       const r = areas?.[0]?.coordRange
-      if (r)
-        actions.current.onRange([Math.max(0, Math.round(r[0])), Math.min(24, Math.round(r[1]) + 1)])
+      const selection = r ? chartRange(r, intervalCount.current) : null
+      if (selection) actions.current.onRange(selection)
     })
     const observer = new ResizeObserver(() => chart.resize())
     observer.observe(container.current)
@@ -70,7 +74,7 @@ export function ForecastChart({ data, selected, range, onSelect, onRange, rangeM
           formatter: (raw: unknown) => {
             const list = raw as { dataIndex: number }[]
             const value = data.intervals[list[0].dataIndex]
-            return `${day(value.start)}\n${time(value.start)}–${time(value.end)} IST\n${amount(value.amount_mm)} mm`
+            return `${day(value.start)}\n${time(value.start)}–${day(value.start) !== day(value.end) ? `${day(value.end)} ` : ''}${time(value.end)} UTC\n${amount(value.amount_mm)} mm`
           },
         },
         xAxis: {

@@ -31,7 +31,7 @@ Decision: proceed with the global implementation and local verification. Keep th
 - Global cells sample native 0.25° IFS values at 1° centers (±0.5, ±1.5, ...). This is **not averaging or a new model resolution**. Small/local rain systems may be missed. Do not use this overview as a replacement for a high-resolution regional view.
 - Full numeric grid contains latitudes ±89.5°. The map and point endpoint support displayed bounds ±85.0511° because Web Mercator cannot display the poles. This limit is stated in About the data.
 - No endpoint or JSON field was removed. Global run IDs append `-global1`, separating immutable URLs and browser cache keys from India runs. Existing IDs still work. Consumers must treat run IDs as opaque identifiers.
-- Bounds and resolution drive the UI; the same timeline, chart, range controls and CSV export are used for both profiles. All time labels remain explicitly IST; CSV timestamps are UTC.
+- Bounds and resolution drive the UI; the same timeline, chart, range controls and CSV export are used for both profiles. All time labels now use UTC; CSV timestamps are UTC.
 - `backend/app/coverage.py` owns profile definitions; `FORECAST_COVERAGE` selects one. Ingestion, rendering and API sampling share those definitions/manifest bounds. No tile server, database or new service is required.
 
 ## Reproduce

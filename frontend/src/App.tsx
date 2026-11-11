@@ -1,4 +1,4 @@
-import { coordinates } from './lib/api'
+import { coordinates, matchingLocations } from './lib/api'
 import { useCallback, useEffect, useReducer, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -126,7 +126,11 @@ export default function App() {
             <span className="dot" />
             ECMWF · IFS
           </span>
-          <button className="about-button" onClick={() => setAbout(!about)}>
+          <button
+            aria-label="About the data"
+            className="about-button"
+            onClick={() => setAbout(!about)}
+          >
             <Info size={16} />
             <span>About the data</span>
           </button>
@@ -166,6 +170,14 @@ export default function App() {
           <ErrorNotice error={latest.error} retry={() => void latest.refetch()} />
         </main>
       )}
+      {manifest && latest.isError && (
+        <div className="about-panel" role="status">
+          Refresh unavailable. Showing the last loaded forecast.
+          <Button variant="ghost" onClick={() => void latest.refetch()}>
+            Retry refresh
+          </Button>
+        </div>
+      )}
       {manifest && (
         <Explorer
           key={manifest.run_id}
@@ -204,6 +216,12 @@ function Explorer({
   const [selectionError, setSelectionError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+  const results = matchingLocations(cities, search, manifest.bounds)
+  const [now, setNow] = useState(Date.now)
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000)
+    return () => clearInterval(timer)
+  }, [])
   useEffect(() => {
     freezeRun()
   }, [freezeRun])
@@ -274,9 +292,9 @@ function Explorer({
     ? -1
     : (values?.reduce<number>((best, v, i, arr) => ((v ?? -1) > (arr[best] ?? -1) ? i : best), 0) ??
       -1)
-  const age = (Date.now() - new Date(manifest.initialization).getTime()) / 3600000
+  const age = (now - new Date(manifest.initialization).getTime()) / 3600000
   const stale = age > 18
-  const expired = Date.now() > new Date(manifest.intervals.at(-1)!.end).getTime()
+  const expired = now > new Date(manifest.intervals.at(-1)!.end).getTime()
   const baseImage = range
     ? `/api/v1/forecasts/${manifest.run_id}/accumulation.png?start=${range[0]}&end=${range[1]}`
     : selected.image_url
@@ -287,7 +305,10 @@ function Explorer({
     setMode(value)
     dispatch({
       type: 'range',
-      range: value === 'range' ? [state.index, Math.min(state.index + 2, 24)] : null,
+      range:
+        value === 'range'
+          ? [state.index, Math.min(state.index + 2, manifest.intervals.length)]
+          : null,
     })
   }
   const download = () => {
@@ -325,7 +346,7 @@ function Explorer({
                 : 'Forecast available'}
           </span>
           <span>
-            Initialized {day(manifest.initialization)} · {time(manifest.initialization)} IST
+            Initialized {day(manifest.initialization)} · {time(manifest.initialization)} UTC
           </span>
           <span className="resolution">
             {manifest.resolution}° {manifest.resolution === 1 ? 'sampled grid' : 'grid'}{' '}
@@ -374,8 +395,8 @@ function Explorer({
             <strong>{day(first.start)}</strong>
             <span>
               {time(first.start)} →{' '}
-              {range && day(first.start) !== day(last.end) ? `${day(last.end)} · ` : ''}
-              {time(last.end)} IST
+              {day(first.start) !== day(last.end) ? `${day(last.end)} · ` : ''}
+              {time(last.end)} UTC
             </span>
           </div>
           {mapStatus !== 'ready' && (
@@ -450,7 +471,7 @@ function Explorer({
             <Search size={16} />
             <input
               aria-label="Search supported cities"
-              placeholder="Search a city"
+              placeholder="Search city presets"
               value={search}
               onFocus={() => setSearchOpen(true)}
               onChange={(e) => {
@@ -459,6 +480,7 @@ function Explorer({
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Escape') setSearchOpen(false)
+                if (e.key === 'Enter' && results.length) selectLocation(results[0])
               }}
             />
             <button aria-label="Toggle city list" onClick={() => setSearchOpen(!searchOpen)}>
@@ -466,24 +488,13 @@ function Explorer({
             </button>
             {searchOpen && (
               <div className="city-results">
-                {cities
-                  .filter(
-                    (c) =>
-                      c.lon >= manifest.bounds[0] &&
-                      c.lon <= manifest.bounds[2] &&
-                      c.lat >= manifest.bounds[1] &&
-                      c.lat <= manifest.bounds[3],
-                  )
-                  .filter((c) => c.name!.toLowerCase().includes(search.toLowerCase()))
-                  .map((c) => (
-                    <button key={c.name} onClick={() => selectLocation(c)}>
-                      <MapPin size={13} />
-                      {c.name}
-                    </button>
-                  ))}
-                {!cities.some((c) => c.name!.toLowerCase().includes(search.toLowerCase())) && (
-                  <p>No preset found. Select a location on the map.</p>
-                )}
+                {results.map((c) => (
+                  <button key={c.name} onClick={() => selectLocation(c)}>
+                    <MapPin size={13} />
+                    {c.name}
+                  </button>
+                ))}
+                {results.length === 0 && <p>No preset found. Select a location on the map.</p>}
               </div>
             )}
           </div>
@@ -604,7 +615,7 @@ function Explorer({
                     <table>
                       <thead>
                         <tr>
-                          <th>Interval start · IST</th>
+                          <th>Interval start · UTC</th>
                           <th>mm / 3h</th>
                         </tr>
                       </thead>
@@ -644,8 +655,8 @@ function Explorer({
                 {day(first.start)}{' '}
                 <span>
                   {time(first.start)}–
-                  {range && day(first.start) !== day(last.end) ? `${day(last.end)} · ` : ''}
-                  {time(last.end)} IST
+                  {day(first.start) !== day(last.end) ? `${day(last.end)} · ` : ''}
+                  {time(last.end)} UTC
                 </span>
               </strong>
             </div>
@@ -706,7 +717,7 @@ function Explorer({
           <Check size={13} />
           Real forecast data · ECMWF Open Data
         </span>
-        <span>All times IST (UTC+05:30) · 72h from model initialization</span>
+        <span>All times UTC · 72h from model initialization</span>
         <a
           href="https://github.com/pallavi-cs-ai/precipitation-explorer"
           target="_blank"

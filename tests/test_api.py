@@ -198,3 +198,34 @@ def test_coverage_configuration(monkeypatch):
     monkeypatch.setenv("FORECAST_COVERAGE", "typo")
     with pytest.raises(ValueError, match="Unknown"):
         configured_coverage()
+
+
+def test_invalid_numeric_grid_is_not_served(tmp_path):
+    client, run = seed(tmp_path)
+    folder = tmp_path / run
+    np.savez_compressed(
+        folder / "grid.npz",
+        precipitation=np.full((2, 2, 2), -1),
+        lat=np.array([6, 5]),
+        lon=np.array([65, 66]),
+    )
+    assert client.get("/readyz").status_code == 503
+    assert client.get(f"/api/v1/forecasts/{run}/point?lat=6&lon=65").status_code == 503
+
+
+def test_latest_refresh_keeps_previous_run_addressable(tmp_path):
+    import shutil
+
+    client, old_run = seed(tmp_path)
+    assert client.get("/api/v1/forecast/latest").json()["run_id"] == old_run
+    new_run = "ifs-20261110T12Z"
+    shutil.copytree(tmp_path / old_run, tmp_path / new_run)
+    path = tmp_path / new_run / "manifest.json"
+    manifest = json.loads(path.read_text())
+    manifest["run_id"] = new_run
+    path.write_text(json.dumps(manifest))
+    (tmp_path / "latest").write_text(new_run)
+    response = client.get("/api/v1/forecast/latest")
+    assert response.json()["run_id"] == new_run
+    assert "max-age=60" in response.headers["cache-control"]
+    assert client.get(f"/api/v1/forecasts/{old_run}/point?lat=6&lon=65").status_code == 200

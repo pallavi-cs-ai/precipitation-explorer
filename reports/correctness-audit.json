@@ -1,0 +1,31 @@
+{
+  "run_id": "ifs-20261111T06Z-global1",
+  "source_steps_compared": 24,
+  "points": [
+    {
+      "lat": 13.5,
+      "lon": 80.5,
+      "sum_intervals_mm": 4.8828125,
+      "source_72h_mm": 4.8828125
+    },
+    {
+      "lat": -23.5,
+      "lon": -46.5,
+      "sum_intervals_mm": 15.0146484375,
+      "source_72h_mm": 15.0146484375
+    },
+    {
+      "lat": 0.5,
+      "lon": 179.5,
+      "sum_intervals_mm": 13.427734375,
+      "source_72h_mm": 13.427734375
+    },
+    {
+      "lat": 0.5,
+      "lon": -179.5,
+      "sum_intervals_mm": 16.9677734375,
+      "source_72h_mm": 16.9677734375
+    }
+  ],
+  "utc_tests_passed": true
+}

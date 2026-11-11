@@ -110,6 +110,7 @@ export function ForecastMap({
         .setLngLat([location.lon, location.lat])
         .addTo(m)
     else marker.current.setLngLat([location.lon, location.lat])
+    if (!m.getBounds().contains([location.lon, location.lat])) m.panTo([location.lon, location.lat])
   }, [location, ready])
   useEffect(() => {
     const m = map.current

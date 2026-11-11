@@ -105,6 +105,15 @@ class ForecastStore:
                 cube, lat, lon = data["precipitation"], data["lat"], data["lon"]
             if cube.shape != (len(self.manifest(run_id).intervals), len(lat), len(lon)):
                 raise ValueError("Invalid array shape")
+            if (
+                not np.isfinite(lat).all()
+                or not np.isfinite(lon).all()
+                or not (np.diff(lat) < 0).all()
+                or not (np.diff(lon) > 0).all()
+                or np.isinf(cube).any()
+                or (cube < 0).any()
+            ):
+                raise ValueError("Invalid grid coordinates or precipitation")
             return cube, lat, lon
         except (OSError, ValueError, KeyError) as exc:
             raise HTTPException(503, "Forecast values are temporarily unavailable") from exc

@@ -84,3 +84,14 @@ All commands, edits, verification and commits below were performed in the same C
 - Verification: 11 backend tests and 4 frontend tests passed; Ruff, ESLint, TypeScript/Vite build passed. Local real-data global ingestion and browser interval/range/city checks passed; no console errors.
 - Preview: http://127.0.0.1:8001. Evidence: reports/global-preview.jpg and benchmark JSON files.
 - Production is still d96df11 / India. No Render environment changes, new paid resources or extra free service were created.
+
+## Milestone 8 — correctness and interaction audit
+
+- Converted every UI time/date formatter, chart tooltip, timeline and range label to UTC; explicit next-day labels handle midnight boundaries. Reused Intl formatters to avoid repeated construction.
+- Fixed accent/whitespace matching, keyboard Enter selection and empty filtered search results. Search remains explicitly limited to city presets; any displayed map location can still be selected. Off-screen selected locations pan into view.
+- Added a background-refresh error/retry notice and a minute clock so freshness/expiry labels update even without user interaction. Active runs remain pinned until the user selects an available newer run.
+- Bounded reversed/out-of-range chart brush selections; removed hardcoded interval count in mode selection. Added an accessible label to the mobile About button.
+- API refuses negative/infinite precipitation and invalid coordinate axes in stored grids. Added a latest-pointer refresh test preserving access to previous run URLs.
+- Independently compared all 24 decoded source GRIB intervals at four global locations (both hemispheres and both sides of the date line). Every interval and the source 72-hour totals matched; reports/correctness-audit.json.
+- Verification: 13 backend tests, 7 frontend tests, Ruff, ESLint and production build passed. Browser verified UTC midnight crossover, normalized search/Enter, global accumulation, 390px no horizontal overflow and 1280px layout; no console errors observed.
+- Evidence screenshot: reports/utc-audit-preview.jpg. Production India deployment remains unchanged per user instruction; audited global build is available locally at port 8001.

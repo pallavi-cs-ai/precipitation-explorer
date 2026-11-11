@@ -30,20 +30,47 @@ export async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> 
 export function shouldRetry(count: number, error: Error) {
   return count < 2 && (!(error instanceof ApiError) || error.status >= 500)
 }
-export const time = (value: string) =>
-  new Intl.DateTimeFormat('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Kolkata',
-  }).format(new Date(value))
-export const day = (value: string) =>
-  new Intl.DateTimeFormat('en-IN', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    timeZone: 'Asia/Kolkata',
-  }).format(new Date(value))
+const utcTime = new Intl.DateTimeFormat('en-GB', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+  timeZone: 'UTC',
+})
+const utcDay = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+})
+export const time = (value: string) => utcTime.format(new Date(value))
+export const day = (value: string) => utcDay.format(new Date(value))
+export const searchKey = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+export function matchingLocations(
+  locations: Location[],
+  query: string,
+  bounds: Manifest['bounds'],
+) {
+  const [w, s, e, n] = bounds
+  return locations.filter(
+    (c) =>
+      c.lon >= w &&
+      c.lon <= e &&
+      c.lat >= s &&
+      c.lat <= n &&
+      searchKey(c.name ?? '').includes(searchKey(query)),
+  )
+}
+export function chartRange(range: number[], count: number): [number, number] | null {
+  if (range.length !== 2 || !range.every(Number.isFinite) || count < 1) return null
+  const start = Math.max(0, Math.min(count - 1, Math.round(Math.min(...range))))
+  const end = Math.max(start + 1, Math.min(count, Math.round(Math.max(...range)) + 1))
+  return [start, end]
+}
 export const amount = (value: number | null | undefined) =>
   value == null ? '—' : value > 0 && value < 0.1 ? '<0.1' : value.toFixed(1)
 export function total(values: (number | null)[]) {

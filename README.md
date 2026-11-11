@@ -39,7 +39,7 @@ The deployed service remains on the India profile. A tested 1° sampled global p
 - Source cumulative precipitation is converted to millimetres and differenced into interval amounts. Only negative differences within GRIB packing tolerance are clamped; larger inconsistencies reject publication.
 - Precipitation includes water-equivalent frozen precipitation. It is not a probability, observation, flood forecast, or street-level prediction.
 - Point inspection samples the nearest grid center. Maps use nearest-neighbour raster rendering; displayed detail does not imply a finer forecast resolution.
-- All displayed times use IST; API timestamps use UTC. The UI identifies older forecasts and offers new runs without mixing data across initialization times.
+- All displayed times use UTC; API timestamps use UTC. The UI identifies older forecasts and offers new runs without mixing data across initialization times.
 
 ## Architecture and reliability
 
