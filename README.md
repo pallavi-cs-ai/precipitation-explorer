@@ -1,5 +1,7 @@
 # Pluvia · Precipitation Explorer
 
+Hosted URL: https://pluvia-precipitation.onrender.com (Render Free; cold starts can take time).
+
 An interactive ECMWF IFS forecast explorer for the QUEST Lab application exercise. MapLibre precipitation maps, an ECharts time series, and a shared timeline stay synchronized. Click a location, advance or play forecast intervals, or select a period to see accumulated precipitation. Includes city presets, CSV export, and an accessible values table.
 
 ## Run locally

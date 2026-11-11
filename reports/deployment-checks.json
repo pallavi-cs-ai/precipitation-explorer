@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-11-11T13:36:05.871400+00:00",
+  "base_url": "https://pluvia-precipitation.onrender.com",
+  "deployed_commit": "d96df11583008995b8b405683193968a401aa128",
+  "run_id": "ifs-20261111T06Z",
+  "checks": [
+    "HTTPS frontend 200",
+    "healthz 200",
+    "readyz ready",
+    "manifest 24 intervals",
+    "point series 24 nonnegative amounts",
+    "frame PNG",
+    "72-hour accumulation PNG",
+    "invalid location 422 with no-store and request ID"
+  ],
+  "point_total_mm": 3.5400390625,
+  "browser_checks": [
+    "map and chart rendered",
+    "next interval synchronized map and timeline",
+    "full 72-hour period shows 3.5 mm at Chennai",
+    "no browser console errors observed"
+  ]
+}

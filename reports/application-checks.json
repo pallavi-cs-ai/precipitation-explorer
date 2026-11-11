@@ -20,8 +20,8 @@
     "390px viewport has no horizontal document overflow"
   ],
   "pending_checks": [
-    "public Render deployment",
-    "Docker image build",
-    "deployed service restart and data rebuild"
-  ]
+    "deployed service restart and data rebuild",
+    "idle wake-up timing"
+  ],
+  "deployment_report": "reports/deployment-checks.json"
 }

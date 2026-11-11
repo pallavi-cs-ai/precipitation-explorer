@@ -21,4 +21,17 @@ Automatic deploys are disabled in the blueprint so verified commits can be deplo
 - OpenFreeMap needs browser network access and MapLibre needs WebGL. The point chart and table remain useful when the basemap fails.
 - Render Free spins down after 15 minutes without inbound traffic. Its wake-up delay precedes ingestion, so the first visitor must wait for both. Refresh polling runs only while the service is awake. See [Render free-tier limits](https://render.com/docs/free).
 
-The Docker image must still be built and verified on Render: Docker is not installed in the local development environment. Public deployment and restart checks are pending Render account access. Do not select a paid upgrade to resolve a quota limit without approval.
+The Docker image was built successfully on Render and the public deployment was verified on 11 November 2026. Restart/re-ingestion and idle wake-up timing have not been measured yet. Do not select a paid upgrade to resolve a quota limit without approval.
+
+## Production configuration
+
+- Project: `precipitation_forecast`; environment: `Production`.
+- Service: `pluvia-precipitation`, Docker, Free, Frankfurt.
+- Public URL: https://pluvia-precipitation.onrender.com
+- Source: public GitHub repository, branch `main`, repository-root Dockerfile and build context.
+- Health check: `/healthz`; dataset readiness: `/readyz`.
+- Auto-deploy: Off. Deploy an explicitly verified commit after CI passes.
+- `FORECAST_DATA_DIR=/tmp/pluvia/forecasts`; no secrets or persistent disk.
+- Frontend and API share the HTTPS origin. Relative `/api/...` URLs avoid hardcoded development hosts and unnecessary CORS permissions. Render terminates TLS; the process binds to `0.0.0.0` using its injected `PORT`.
+
+Created through the dashboard using the public repository, matching `render.yaml`. The service is not Blueprint-managed; keep dashboard settings and this file aligned when changing configuration.

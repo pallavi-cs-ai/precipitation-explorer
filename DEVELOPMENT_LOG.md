@@ -63,3 +63,13 @@ All commands, edits, verification and commits below were performed in the same C
 - Documented idle spin-down, cache loss, re-ingestion and awake-only polling. No paid resource authorized.
 - GitHub Actions for ac1ada5 passed both frontend and backend jobs on Linux.
 - Configuration validation: reviewed blueprint for no disk and Free plan; git diff --check. Public deployment remains pending account access.
+
+## Milestone 6 — public Render deployment
+
+- Used the existing precipitation_forecast / Production environment after user sign-in. Created pluvia-precipitation from the public repository, main branch, Dockerfile at repo root.
+- Matched committed configuration: Free, Frankfurt, no disk, temporary forecast directory, /healthz, auto-deploy off. No additional GitHub access or credentials required.
+- Deployed d96df11583008995b8b405683193968a401aa128 after GitHub CI passed. Docker build succeeded on Render.
+- Public URL: https://pluvia-precipitation.onrender.com. Same-origin relative API paths require no host rewrite or CORS change.
+- Verified HTTPS frontend, health and readiness, real run ifs-20261111T06Z, point series, PNG frame, accumulation image and structured invalid-coordinate response.
+- Browser verified map/chart rendering, next-interval synchronization, full-period selection and no console errors. Evidence: reports/deployment-checks.json and reports/deployed-preview.jpg.
+- Idle wake-up/re-ingestion timing remains unmeasured. Documentation-only follow-up commit does not require redeploying the verified application.
