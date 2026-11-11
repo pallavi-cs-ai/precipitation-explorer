@@ -1,0 +1,12 @@
+{
+  "run_id": "ifs-20261110T06Z",
+  "frames_verified": 24,
+  "point": {
+    "lat": 20.75,
+    "lon": 92.5
+  },
+  "point_total_mm": 9.21630859375,
+  "accumulation_status": 200,
+  "frontend_http_status": 200,
+  "browser_verified": false
+}

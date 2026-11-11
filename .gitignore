@@ -10,3 +10,9 @@ data/
 .DS_Store
 
 reports/run.log
+
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+.ruff_cache/
+coverage/

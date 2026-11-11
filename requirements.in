@@ -3,3 +3,7 @@ eccodes
 numpy
 matplotlib
 pytest
+fastapi
+uvicorn
+httpx
+ruff

@@ -34,3 +34,11 @@ All commands, edits, verification and commits below were performed in the same C
 - User locked the precipitation explorer product and map/timeline/chart interactions.
 - Recorded chart behavior, API contracts, three cache layers, data correctness requirements and delivery standards in `docs/ARCHITECTURE.md`.
 - Documentation validation: `git diff --check`. No runtime code changed at this checkpoint.
+
+## Milestone 4 — complete ingestion and read-only API
+
+- Downloaded and validated 24 real IFS precipitation fields covering 72 forecast hours; generated India-region numeric arrays and Web Mercator image overlays.
+- Added bounded upstream timeouts/retries, source fallback, single-writer locking, atomic run publication, previous-run preservation and run retention.
+- Added typed FastAPI endpoints for metadata, point series, frames, accumulated images, readiness and health; consistent uncached error responses include request IDs.
+- Verification: 9 Python tests passed, including upstream failure preservation, missing/corrupt data, invalid coordinates, image orientation and accumulation consistency. Ruff lint/format passed.
+- Real-data integration verified all 24 PNG frames, one point series, accumulation and successful frontend HTTP serving; evidence in `reports/application-checks.json`.
