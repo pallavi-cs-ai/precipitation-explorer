@@ -8,5 +8,20 @@
   "point_total_mm": 9.21630859375,
   "accumulation_status": 200,
   "frontend_http_status": 200,
-  "browser_verified": false
+  "browser_verified": true,
+  "browser_checks": [
+    "interval next synchronizes map and timeline",
+    "city selection updates point series",
+    "map click updates nearest-grid point",
+    "bar click selects forecast interval",
+    "playback advances and pauses",
+    "brush selects accumulated period",
+    "native period selectors support full 72 hours",
+    "390px viewport has no horizontal document overflow"
+  ],
+  "pending_checks": [
+    "public Render deployment",
+    "Docker image build",
+    "deployed service restart persistence"
+  ]
 }

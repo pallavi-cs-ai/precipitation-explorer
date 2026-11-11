@@ -42,3 +42,17 @@ All commands, edits, verification and commits below were performed in the same C
 - Added typed FastAPI endpoints for metadata, point series, frames, accumulated images, readiness and health; consistent uncached error responses include request IDs.
 - Verification: 9 Python tests passed, including upstream failure preservation, missing/corrupt data, invalid coordinates, image orientation and accumulation consistency. Ruff lint/format passed.
 - Real-data integration verified all 24 PNG frames, one point series, accumulation and successful frontend HTTP serving; evidence in `reports/application-checks.json`.
+
+## Milestone 5 — interactive explorer
+
+- Built React/TypeScript UI with MapLibre, ECharts, TanStack Query, Tailwind and shadcn-style button primitives.
+- Added synchronized map clicks, city selection, chart selection, timeline playback, accumulated-period brush and selectors, CSV export and values table.
+- Added request cancellation, bounded retries, loading/error states, stale-run labels and a rendering error boundary.
+- Browser verification exercised real IFS data, including bar-to-map synchronization, map clicks, playback and range brushing. Corrected timeline range labels and registered ECharts toolbox dependency found during browser QA.
+- At 390px, document scroll width equals viewport width; desktop screenshot saved in reports/explorer-preview.jpg.
+- Verification: 9 backend tests, 3 frontend tests, Ruff, ESLint and TypeScript/Vite production build passed.
+
+## Deployment preparation
+
+- Added Docker build, Render blueprint, CI and local/deployment instructions.
+- Paid Render service creation remains pending cost approval. Local Docker executable is unavailable; container build and public deployment are not yet verified.
