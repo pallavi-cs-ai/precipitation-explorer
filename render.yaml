@@ -1,16 +1,12 @@
-# Paid service + persistent disk. Review Render's displayed cost before deploying.
+# Free service: forecast cache is rebuilt after restart or idle spin-down.
 services:
   - type: web
     name: pluvia-precipitation
     runtime: docker
-    plan: starter
+    plan: free
     region: frankfurt
     healthCheckPath: /healthz
     autoDeployTrigger: off
     envVars:
       - key: FORECAST_DATA_DIR
-        value: /var/data/forecasts
-    disk:
-      name: forecast-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: /tmp/pluvia/forecasts

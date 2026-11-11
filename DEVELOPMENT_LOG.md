@@ -56,3 +56,10 @@ All commands, edits, verification and commits below were performed in the same C
 
 - Added Docker build, Render blueprint, CI and local/deployment instructions.
 - Paid Render service creation remains pending cost approval. Local Docker executable is unavailable; container build and public deployment are not yet verified.
+
+## Free-hosting decision
+
+- User explicitly selected free hosting. Changed Render blueprint to Free, removed disk, and set temporary forecast storage.
+- Documented idle spin-down, cache loss, re-ingestion and awake-only polling. No paid resource authorized.
+- GitHub Actions for ac1ada5 passed both frontend and backend jobs on Linux.
+- Configuration validation: reviewed blueprint for no disk and Free plan; git diff --check. Public deployment remains pending account access.

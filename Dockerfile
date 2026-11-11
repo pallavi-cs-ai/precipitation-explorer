@@ -6,7 +6,7 @@ COPY frontend/ ./
 RUN npm run build
 
 FROM python:3.12-slim-bookworm
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 FORECAST_DATA_DIR=/var/data/forecasts
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 FORECAST_DATA_DIR=/tmp/pluvia/forecasts
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
