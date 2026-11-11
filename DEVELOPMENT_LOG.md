@@ -95,3 +95,8 @@ All commands, edits, verification and commits below were performed in the same C
 - Independently compared all 24 decoded source GRIB intervals at four global locations (both hemispheres and both sides of the date line). Every interval and the source 72-hour totals matched; reports/correctness-audit.json.
 - Verification: 13 backend tests, 7 frontend tests, Ruff, ESLint and production build passed. Browser verified UTC midnight crossover, normalized search/Enter, global accumulation, 390px no horizontal overflow and 1280px layout; no console errors observed.
 - Evidence screenshot: reports/utc-audit-preview.jpg. Production India deployment remains unchanged per user instruction; audited global build is available locally at port 8001.
+
+## Heading clarification
+
+- User requested map heading: 3-HOUR PRECIPITATION for interval mode, TOTAL PRECIPITATION for selected-period accumulation.
+- Updated the existing mode-dependent label. Verification: TypeScript/Vite production build and git diff --check passed.

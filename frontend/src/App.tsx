@@ -390,7 +390,7 @@ function Explorer({
           </div>
           <div className="map-stamp">
             <span className="eyebrow">
-              {range ? 'ACCUMULATED PRECIPITATION' : 'TOTAL PRECIPITATION'}
+              {range ? 'TOTAL PRECIPITATION' : '3-HOUR PRECIPITATION'}
             </span>
             <strong>{day(first.start)}</strong>
             <span>
