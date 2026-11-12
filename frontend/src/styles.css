@@ -426,7 +426,15 @@ input[type='range']:focus-visible {
   background: none;
   border: 0;
 }
+.search-help {
+  color: #607579;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px;
+}
 .city-results {
+  max-height: 240px;
+  overflow-y: auto;
   position: absolute;
   top: 43px;
   left: 0;

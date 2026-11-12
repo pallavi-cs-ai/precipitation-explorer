@@ -469,10 +469,27 @@ function Explorer({
             <span className="eyebrow">LOCATION FORECAST</span>
             <ScanLine size={17} />
           </div>
-          <div className="search-wrap">
+          <label htmlFor="location-presets" className="eyebrow">
+            QUICK LOCATIONS
+          </label>
+          <p id="location-search-help" className="search-help">
+            Choose a preset, or click anywhere on the map to inspect its forecast.
+          </p>
+          <div
+            className="search-wrap"
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+                setSearchOpen(false)
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setSearchOpen(false)
+            }}
+          >
             <Search size={16} />
             <input
-              aria-label="Search supported cities"
+              id="location-presets"
+              aria-label="Search preset locations"
+              aria-describedby="location-search-help"
               placeholder="Search city presets"
               value={search}
               onFocus={() => setSearchOpen(true)}
@@ -485,11 +502,16 @@ function Explorer({
                 if (e.key === 'Enter' && results.length) selectLocation(results[0])
               }}
             />
-            <button aria-label="Toggle city list" onClick={() => setSearchOpen(!searchOpen)}>
+            <button
+              aria-label="Toggle preset locations"
+              aria-expanded={searchOpen}
+              aria-controls="preset-results"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
               <ChevronDown size={15} />
             </button>
             {searchOpen && (
-              <div className="city-results">
+              <div className="city-results" id="preset-results">
                 {results.map((c) => (
                   <button key={c.name} onClick={() => selectLocation(c)}>
                     <MapPin size={13} />

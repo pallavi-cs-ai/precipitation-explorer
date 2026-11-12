@@ -7,7 +7,11 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -b --pretty false",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

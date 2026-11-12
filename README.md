@@ -28,13 +28,13 @@ Open http://127.0.0.1:3000. Vite proxies `/api` to port 8000. Ingestion fetches 
 
 For a production-style local process, run `npm run build` in `frontend`, then `python -m backend.app.serve` from the repository root. FastAPI serves the compiled frontend and the supervisor runs ingestion separately.
 
-## Optional global overview
+## Coverage profiles
 
-The deployed service remains on the India profile. A tested 1° sampled global profile is available locally with `FORECAST_COVERAGE=global1` and a separate `FORECAST_DATA_DIR`. See [benchmark, limitations and rollout](docs/GLOBAL_BENCHMARK.md). API fields and interactions are shared between profiles.
+The deployed service uses `FORECAST_COVERAGE=global1` for a 1° sampled global overview. Local ingestion defaults to the India profile; use `FORECAST_COVERAGE=global1` and a separate `FORECAST_DATA_DIR` for global data. See [benchmark, limitations and rollout](docs/GLOBAL_BENCHMARK.md). API fields and interactions are shared between profiles.
 
 ## Scientific scope
 
-- ECMWF IFS total precipitation, cropped to grid centers 5–38°N and 65–100°E at 0.25° resolution.
+- ECMWF IFS total precipitation: a 1° sampled global overview or an India profile cropped to grid centers 5–38°N and 65–100°E at 0.25° resolution. The global profile samples native grid points; it does not calculate 1° area averages.
 - 24 three-hour intervals covering 72 hours **from model initialization**.
 - Source cumulative precipitation is converted to millimetres and differenced into interval amounts. Packing-bounded cumulative decreases are corrected with a backward cumulative minimum before differencing. This preserves nonnegative intervals and the final source total; larger inconsistencies reject publication.
 - Precipitation includes water-equivalent frozen precipitation. It is not a probability, observation, flood forecast, or street-level prediction.
@@ -49,18 +49,36 @@ API errors use structured responses and request IDs. The frontend has bounded re
 
 See [architecture](docs/ARCHITECTURE.md), [deployment](docs/DEPLOYMENT.md), and [development log](DEVELOPMENT_LOG.md).
 
-## Verification
+## Verification and formatting
+
+After installing Python and frontend dependencies, enable the tracked Git hook in each clone:
 
 ```sh
-.venv/bin/python -m pytest -q
-.venv/bin/ruff check backend tests
-cd frontend
-npm run lint
-npm test
-npm run build
+git config core.hooksPath .githooks
+.githooks/pre-commit
 ```
 
-GitHub Actions runs backend checks and frontend lint, tests, and build. Browser checks are recorded in `reports/application-checks.json`; these supplement automated processing/API/state tests.
+The hook checks the working tree without rewriting or staging files: Ruff lint/format checks for `backend` and `tests/test_api.py`, all Python tests, Prettier, ESLint, TypeScript, and frontend tests. Stage the intended changes before committing. Legacy exploration scripts are outside the Python formatting scope. GitHub Actions repeats these checks and builds the production frontend.
+
+To format code intentionally:
+
+```sh
+.venv/bin/python -m ruff format backend tests/test_api.py
+npm --prefix frontend run format
+```
+
+To verify and build the frontend:
+
+```sh
+npm --prefix frontend run verify
+npm --prefix frontend run build
+```
+
+Date formatting is separate from code formatting: UI labels use 24-hour UTC, midnight is `00:00`, and API/CSV timestamps use ISO 8601 UTC. Regression tests cover timezone offsets and date rollover.
+
+“Quick locations” searches 16 curated presets, not a worldwide city database. Click the map to inspect any other location in the displayed coverage. Search ignores accents and surrounding whitespace; Enter selects the first match and Escape closes the results.
+
+Browser checks supplement automated processing/API/state tests; see the development log for milestone-specific verification.
 
 ## Data, attribution, and session history
 

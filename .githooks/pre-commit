@@ -1,0 +1,13 @@
+#!/bin/sh
+# Read-only checks: never rewrite files or silently change the staged commit.
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+if [ -x .venv/bin/python ]; then
+    PYTHON_CHECKS=.venv/bin/python
+else
+    PYTHON_CHECKS=python3
+fi
+"$PYTHON_CHECKS" -m ruff check backend tests/test_api.py
+"$PYTHON_CHECKS" -m ruff format --check backend tests/test_api.py
+"$PYTHON_CHECKS" -m pytest -q
+npm --prefix frontend run verify

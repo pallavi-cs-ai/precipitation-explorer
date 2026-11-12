@@ -124,3 +124,11 @@ All commands, edits, verification and commits below were performed in the same C
 - Verified all 1,555,200 interval values against an independent reconstruction from original 18Z GRIB: no negative intervals, zero maximum horizon-total discrepancy, all 7,904 source-dry points dry, 57,353 monotonic series unchanged.
 - 15 backend tests and Ruff checks passed. Fresh production decode peak RSS 204.375 MiB; local decode 1.89 s. No frontend feature or API-field changes.
 - Full evidence in reports/CONSERVATION_FIX.md and conservation-fix.json; Render deployment still required.
+
+## Final UTC, location controls, and developer checks
+
+- Reviewed UTC formatting in ingestion, API, chart/timeline labels and CSV; existing midnight and timezone-offset/date-rollover regression tests pass.
+- Clarified the 16-item curated dropdown as Quick locations, with map-selection guidance, accessible help, Escape/focus dismissal and a scrollable result list. No external geocoder added.
+- Browser verified accent/whitespace search for São Paulo, Enter selection, empty-result guidance, Escape dismissal and preset selection. At 390px viewport, document width is 390px and dropdown content scrolls within 238px. Local preview uses an older fixture run, not a new source-data audit.
+- Added frontend formatting/typecheck/verify scripts and CI Prettier check. Installed tracked read-only pre-commit hook using core.hooksPath; documented per-clone setup and Python formatting scope.
+- Verification: 15 Python tests, 7 frontend tests, Ruff, Prettier, ESLint, TypeScript and production build passed. Render deployment is separate.
