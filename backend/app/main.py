@@ -75,7 +75,7 @@ class ForecastStore:
         self.render_lock = Lock()
 
     def directory(self, run_id: str) -> Path:
-        if not re.fullmatch(r"ifs-\d{8}T\d{2}Z(?:-global1)?", run_id):
+        if not re.fullmatch(r"ifs-\d{8}T\d{2}Z(?:-v2)?(?:-global1)?", run_id):
             raise HTTPException(404, "Forecast run not found")
         path = self.root / run_id
         if not (path / "manifest.json").is_file():

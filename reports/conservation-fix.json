@@ -1,0 +1,16 @@
+{
+  "source_run": "ifs-20261111T18Z-global1",
+  "source_sha256": "99fbdb2a2fa4b1071922813af1eca782aec97cb54a0748fbd12bb7cc21479723",
+  "grid_points": 64800,
+  "interval_values": 1555200,
+  "max_total_difference_mm": 0.0,
+  "negative_output_intervals": 0,
+  "dry_points": 7904,
+  "dry_points_with_nonzero_intervals": 0,
+  "unchanged_monotonic_points": 57353,
+  "corrected_cumulative_values": 26348,
+  "max_cumulative_adjustment_mm": 0.1220703125,
+  "decode_seconds": 1.7500886251218617,
+  "audit_process_peak_rss_bytes": 273924096,
+  "note": "RSS includes source arrays and independent reference; not production-only memory."
+}

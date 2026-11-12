@@ -22,7 +22,7 @@ from .processing import (
     COLORS,
     THRESHOLDS,
     DataValidationError,
-    deaccumulate,
+    reconstruct_intervals,
     render_png,
     to_mm,
 )
@@ -97,15 +97,19 @@ def decode(path: Path, expected_run: datetime, coverage: Coverage = INDIA):
                 codes_release(gid)
     if sorted(arrays) != list(range(3, 73, 3)):
         raise DataValidationError("Incomplete 72-hour forecast")
-    previous, previous_error = np.zeros_like(arrays[3]), 0.0
-    intervals = []
-    for step in sorted(arrays):
-        error = records[step]["packing_error_mm"]
-        raw_delta = arrays[step] - previous
-        records[step]["negative_differences_clipped"] = int((raw_delta < 0).sum())
-        intervals.append(deaccumulate(previous, arrays[step], error + previous_error + 1e-8))
-        previous, previous_error = arrays[step], error
-    return np.stack(intervals), yy, xx, list(records.values())
+    steps = sorted(arrays)
+    cumulative = np.stack([arrays[step] for step in steps])
+    intervals = reconstruct_intervals(
+        cumulative, np.array([records[step]["packing_error_mm"] for step in steps])
+    )
+    reconstructed = np.cumsum(intervals, axis=0)
+    for i, step in enumerate(steps):
+        adjustment = cumulative[i] - reconstructed[i]
+        records[step]["cumulative_cells_corrected"] = int((adjustment > 1e-10).sum())
+        records[step]["max_cumulative_adjustment_mm"] = float(adjustment.max())
+    if not np.allclose(intervals.sum(axis=0), cumulative[-1], rtol=0, atol=1e-9):
+        raise DataValidationError("Reconstructed horizon total differs from source")
+    return intervals, yy, xx, list(records.values())
 
 
 def refresh(root: Path = ROOT):
@@ -133,7 +137,7 @@ def refresh(root: Path = ROOT):
                 run = client.latest(type="fc", stream="oper", step=72, param="tp").replace(
                     tzinfo=timezone.utc
                 )
-                run_id = f"ifs-{run:%Y%m%dT%H}Z{coverage.suffix}"
+                run_id = f"ifs-{run:%Y%m%dT%H}Z-v2{coverage.suffix}"
                 target = root / run_id
                 current = (
                     (root / "latest").read_text().strip() if (root / "latest").exists() else ""
@@ -178,6 +182,7 @@ def refresh(root: Path = ROOT):
                     )
                 manifest = {
                     "schema_version": 1,
+                    "processing_version": "v2-backward-minimum",
                     "run_id": run_id,
                     "model": "IFS",
                     "initialization": run.isoformat(),

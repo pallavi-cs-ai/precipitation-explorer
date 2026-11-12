@@ -31,6 +31,36 @@ def deaccumulate(previous: np.ndarray, current: np.ndarray, tolerance: float) ->
     return np.maximum(delta, 0).astype(np.float32)
 
 
+def reconstruct_intervals(cumulative: np.ndarray, packing_errors: np.ndarray) -> np.ndarray:
+    """Use the backward cumulative minimum, anchored to the final source total.
+
+    Only packing-bounded corrections are allowed. This removes earlier quantization
+    excess instead of dropping a negative interval and inventing additional water.
+    Sub-packing-precision rainfall timing cannot be recovered from the source.
+    """
+    values = np.asarray(cumulative, dtype=np.float64)
+    errors = np.asarray(packing_errors, dtype=np.float64)
+    if (
+        values.ndim < 1
+        or len(values) == 0
+        or errors.shape != (len(values),)
+        or not np.isfinite(values).all()
+        or (values < 0).any()
+        or not np.isfinite(errors).all()
+        or (errors < 0).any()
+    ):
+        raise DataValidationError("Invalid cumulative fields or packing errors")
+    corrected = values.copy()
+    future_error = np.full(values.shape[1:], errors[-1])
+    for i in range(len(values) - 2, -1, -1):
+        lower = corrected[i + 1] < values[i]
+        if np.any(values[i] - corrected[i + 1] > errors[i] + future_error + 1e-8):
+            raise DataValidationError("Accumulation decreased beyond packing tolerance")
+        corrected[i] = np.minimum(values[i], corrected[i + 1])
+        future_error = np.where(lower, future_error, errors[i])
+    return np.diff(corrected, axis=0, prepend=np.zeros_like(corrected[:1]))
+
+
 def render_png(
     values: np.ndarray, lat: np.ndarray, lon: np.ndarray, *, accumulated=False, bounds=BOUNDS
 ) -> bytes:

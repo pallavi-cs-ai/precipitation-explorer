@@ -229,3 +229,36 @@ def test_latest_refresh_keeps_previous_run_addressable(tmp_path):
     assert response.json()["run_id"] == new_run
     assert "max-age=60" in response.headers["cache-control"]
     assert client.get(f"/api/v1/forecasts/{old_run}/point?lat=6&lon=65").status_code == 200
+
+
+def test_conservative_reconstruction():
+    import pytest
+
+    from backend.app.processing import DataValidationError, reconstruct_intervals
+
+    # Both an intermediate decline and final zero must not create phantom rain.
+    source = np.array([[0.1, 1, 0], [0, 0.95, 2], [0, 2, 3]])
+    intervals = reconstruct_intervals(source, np.array([0.1, 0.1, 0.1]))
+    assert (intervals >= 0).all()
+    np.testing.assert_allclose(intervals.sum(axis=0), source[-1], rtol=0, atol=1e-12)
+    np.testing.assert_allclose(intervals[:, 0], 0)
+    np.testing.assert_allclose(intervals[:, 2], [0, 2, 1])
+    np.testing.assert_allclose(intervals[:, 1], [0.95, 0, 1.05])
+    # Repeated small drops cannot conceal a larger, unsupported reset.
+    with pytest.raises(DataValidationError):
+        reconstruct_intervals(np.array([1.0, 0.9, 0.8, 0.7]), np.full(4, 0.06))
+    with pytest.raises(DataValidationError):
+        reconstruct_intervals(np.array([1.0, np.nan]), np.full(2, 0.1))
+
+
+def test_v2_run_identifier_is_supported(tmp_path):
+    client, run = seed(tmp_path)
+    new = run + "-v2-global1"
+    folder = tmp_path / run
+    m = json.loads((folder / "manifest.json").read_text())
+    m["run_id"] = new
+    (folder / "manifest.json").write_text(json.dumps(m))
+    folder.rename(tmp_path / new)
+    (tmp_path / "latest").write_text(new)
+    assert client.get("/readyz").status_code == 200
+    assert client.get(f"/api/v1/forecasts/{new}/point?lat=6&lon=65").status_code == 200

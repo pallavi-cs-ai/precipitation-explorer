@@ -1,5 +1,7 @@
 # Independent IFS GRIB2 validation
 
+> Historical v1 audit. The discrepancy below is fixed in processing v2; see [correction verification](CONSERVATION_FIX.md).
+
 ## Conclusion
 
 The source-to-served-value checks found **no unit, geographic indexing, sampled-coordinate or UTC-boundary errors** at 14 tested locations (336 intervals). All served intervals exactly match independently computed differences **after the application’s negative-difference clipping rule**.

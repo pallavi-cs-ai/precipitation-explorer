@@ -36,7 +36,7 @@ The deployed service remains on the India profile. A tested 1° sampled global p
 
 - ECMWF IFS total precipitation, cropped to grid centers 5–38°N and 65–100°E at 0.25° resolution.
 - 24 three-hour intervals covering 72 hours **from model initialization**.
-- Source cumulative precipitation is converted to millimetres and differenced into interval amounts. Only negative differences within GRIB packing tolerance are clamped; larger inconsistencies reject publication.
+- Source cumulative precipitation is converted to millimetres and differenced into interval amounts. Packing-bounded cumulative decreases are corrected with a backward cumulative minimum before differencing. This preserves nonnegative intervals and the final source total; larger inconsistencies reject publication.
 - Precipitation includes water-equivalent frozen precipitation. It is not a probability, observation, flood forecast, or street-level prediction.
 - Point inspection samples the nearest grid center. Maps use nearest-neighbour raster rendering; displayed detail does not imply a finer forecast resolution.
 - All displayed times use UTC; API timestamps use UTC. The UI identifies older forecasts and offers new runs without mixing data across initialization times.

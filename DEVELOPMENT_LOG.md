@@ -115,3 +115,12 @@ All commands, edits, verification and commits below were performed in the same C
 - Units, sampled coordinates, grid indexing, UTC boundaries and clipped-interval values match. Found real nonzero-total artifacts at three source-dry points due to clipping negative packing differences; full-grid maximum total excess 0.213623046875 mm.
 - Detailed report: reports/SOURCE_GRIB_VALIDATION.md; machine-readable field and interval evidence: reports/source-grib-audit.json.
 - No application or deployment changes made. This milestone records both passing checks and the unresolved cumulative-consistency discrepancy.
+
+## Processing v2 — fix cumulative consistency
+
+- Replaced per-interval clipping in ingestion with a packing-bounded backward cumulative minimum anchored to the final source total; intervals are differences of the corrected sequence. Stored float64 preserves source precision.
+- Larger decreases still reject publication; validation records corrected-cell counts and maximum adjustments, and publication asserts total conservation.
+- Versioned processed run IDs with -v2 to force regeneration and isolate immutable caches; legacy IDs remain supported.
+- Verified all 1,555,200 interval values against an independent reconstruction from original 18Z GRIB: no negative intervals, zero maximum horizon-total discrepancy, all 7,904 source-dry points dry, 57,353 monotonic series unchanged.
+- 15 backend tests and Ruff checks passed. Fresh production decode peak RSS 204.375 MiB; local decode 1.89 s. No frontend feature or API-field changes.
+- Full evidence in reports/CONSERVATION_FIX.md and conservation-fix.json; Render deployment still required.

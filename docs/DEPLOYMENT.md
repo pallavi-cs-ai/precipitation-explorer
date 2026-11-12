@@ -35,3 +35,7 @@ The Docker image was built successfully on Render and the public deployment was 
 - Frontend and API share the HTTPS origin. Relative `/api/...` URLs avoid hardcoded development hosts and unnecessary CORS permissions. Render terminates TLS; the process binds to `0.0.0.0` using its injected `PORT`.
 
 Created through the dashboard using the public repository, matching `render.yaml`. The service is not Blueprint-managed; keep dashboard settings and this file aligned when changing configuration.
+
+## Processing v2 rollout
+
+Deploy the corrected commit with the existing `FORECAST_COVERAGE=global1`. New data IDs use `ifs-YYYYMMDDTHHZ-v2-global1` (`-v2` for India). This forces reprocessing even when the initialization is unchanged and prevents stale immutable PNG/point caches from hiding the correction. Existing v1 URLs remain readable while retained. Wait for `/readyz` to return a v2 ID, then reload the browser or select the newer-run prompt. No URL, secret, or coverage-setting change is required.
