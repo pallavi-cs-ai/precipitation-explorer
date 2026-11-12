@@ -107,3 +107,11 @@ All commands, edits, verification and commits below were performed in the same C
 - Selected Fort William, UK: approximately 3.54 mm over 72 hours, with 11 intervals >=0.1 mm. This is a forecast-grid sample, not an observation or a guarantee of future rainfall.
 - Global mode initially selects Fort William; India retains Chennai, and existing location search/map selection remain available.
 - ESLint and TypeScript/Vite production build passed.
+
+## Independent source GRIB validation
+
+- Resumed the user-requested source-data audit; original 12Z source download was complete and matched its recorded SHA, but that run was no longer served. Pinned and fetched live 18Z run instead, verified exact source hash.
+- Independent ecCodes audit uses scan metadata and separate geographic nearest-point lookup; imports no application processing helpers. Compared 336 intervals at 14 source-selected/city/date-line points.
+- Units, sampled coordinates, grid indexing, UTC boundaries and clipped-interval values match. Found real nonzero-total artifacts at three source-dry points due to clipping negative packing differences; full-grid maximum total excess 0.213623046875 mm.
+- Detailed report: reports/SOURCE_GRIB_VALIDATION.md; machine-readable field and interval evidence: reports/source-grib-audit.json.
+- No application or deployment changes made. This milestone records both passing checks and the unresolved cumulative-consistency discrepancy.
