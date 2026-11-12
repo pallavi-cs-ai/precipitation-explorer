@@ -68,7 +68,7 @@ export function reducer(state: State, action: Action): State {
       }
   }
 }
-const globalDefault: Location = { name: 'Fort William, UK', lat: 56.8198, lon: -5.1052 }
+const globalDefault: Location = { name: 'Zurich, Switzerland', lat: 47.3769, lon: 8.5417 }
 const cities: Location[] = [
   { name: 'Chennai', lat: 13.0827, lon: 80.2707 },
   { name: 'Bengaluru', lat: 12.9716, lon: 77.5946 },

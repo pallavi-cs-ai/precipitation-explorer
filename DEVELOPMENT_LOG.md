@@ -132,3 +132,8 @@ All commands, edits, verification and commits below were performed in the same C
 - Browser verified accent/whitespace search for São Paulo, Enter selection, empty-result guidance, Escape dismissal and preset selection. At 390px viewport, document width is 390px and dropdown content scrolls within 238px. Local preview uses an older fixture run, not a new source-data audit.
 - Added frontend formatting/typecheck/verify scripts and CI Prettier check. Installed tracked read-only pre-commit hook using core.hooksPath; documented per-clone setup and Python formatting scope.
 - Verification: 15 Python tests, 7 frontend tests, Ruff, Prettier, ESLint, TypeScript and production build passed. Render deployment is separate.
+
+## Zurich global default
+
+- User requested Zurich as the initial global location. Updated the shared default/preset to Zurich, Switzerland (47.3769°N, 8.5417°E); India still defaults to Chennai.
+- TypeScript/Vite production build passed; the installed pre-commit hook runs formatting, lint, type checks and all tests for this milestone.
